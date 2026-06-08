@@ -1,1107 +1,932 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>.uzo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mutación 2026">
+<title>Mutación 2026 — Entrenamiento Híbrido</title>
+
+<!-- Manifest inline (data URI) para instalación en celular -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"Mutación 2026","short_name":"Mutación","start_url":".","display":"standalone","background_color":"%230a0a0b","theme_color":"%230a0a0b","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22%3E%3Crect width=%22192%22 height=%22192%22 rx=%2242%22 fill=%22%230a0a0b%22/%3E%3Ctext x=%2296%22 y=%22128%22 font-size=%22110%22 font-family=%22Arial%22 font-weight=%22900%22 fill=%22%2300ff88%22 text-anchor=%22middle%22%3EM%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
+<link rel="apple-touch-icon" href='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22%3E%3Crect width=%22192%22 height=%22192%22 rx=%2242%22 fill=%22%230a0a0b%22/%3E%3Ctext x=%2296%22 y=%22132%22 font-size=%22110%22 font-family=%22Arial%22 font-weight=%22900%22 fill=%22%2300ff88%22 text-anchor=%22middle%22%3EM%3C/text%3E%3C/svg%3E'>
+
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Sora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Saira Condensed"', 'sans-serif'],
+        body: ['"Sora"', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
+      },
+      colors: {
+        ink: '#0a0a0b',
+        panel: '#141417',
+        panel2: '#1c1c21',
+        line: '#2a2a31',
+        neon: '#00ff88',
+        sport: '#2e8bff',
+        muted: '#7a7a85',
+      }
+    }
+  }
+}
+</script>
+
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-:root {
-  --black: #0D0D0B;
-  --off-white: #F7F5F0;
-  --warm-gray: #E8E4DD;
-  --mid: #9A9189;
-  --accent: #C4A882;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Jost', sans-serif;
-  --wa: #25D366;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--sans);
-  background: var(--off-white);
-  color: var(--black);
-  overflow-x: hidden;
-  cursor: none;
-}
-
-/* ── CURSOR ── */
-.cursor {
-  width: 8px; height: 8px;
-  background: var(--black);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, background 0.3s;
-  transform: translate(-50%, -50%);
-}
-
-.cursor-ring {
-  width: 36px; height: 36px;
-  border: 1px solid rgba(13,13,11,0.35);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: all 0.12s ease;
-}
-
-body:has(a:hover) .cursor,
-body:has(button:hover) .cursor { width: 14px; height: 14px; background: var(--accent); }
-body:has(a:hover) .cursor-ring,
-body:has(button:hover) .cursor-ring { width: 50px; height: 50px; border-color: var(--accent); }
-
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 3rem;
-  mix-blend-mode: normal;
-  transition: background 0.4s, border-color 0.4s;
-}
-
-nav.scrolled {
-  background: rgba(247,245,240,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 0.5px solid rgba(13,13,11,0.12);
-}
-
-.nav-left { display: flex; gap: 2.5rem; align-items: center; }
-.nav-right { display: flex; gap: 1.8rem; align-items: center; }
-
-.nav-link {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--black);
-  font-weight: 400;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-}
-.nav-link:hover { opacity: 1; }
-
-.logo {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  font-family: var(--serif);
-  font-size: 24px; font-weight: 300;
-  letter-spacing: 0.3em;
-  color: var(--black);
-  text-decoration: none;
-}
-
-/* hero: logo blanco */
-.hero-active .logo { color: #fff; }
-.hero-active .nav-link { color: #fff; }
-
-.cart-pill {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--black); color: var(--off-white);
-  border: none; padding: 8px 20px;
-  font-family: var(--sans); font-size: 10px;
-  letter-spacing: 0.15em; text-transform: uppercase;
-  cursor: pointer; transition: background 0.2s;
-  border-radius: 0;
-}
-.cart-pill:hover { background: #333; }
-
-.cart-count-badge {
-  background: var(--accent); color: #fff;
-  font-size: 10px; font-weight: 500;
-  width: 18px; height: 18px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
-
-/* ── HERO VIDEO ── */
-.hero {
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  display: flex; align-items: flex-end;
-}
-
-.hero-media {
-  position: absolute; inset: 0;
-  background: var(--black);
-}
-
-.hero-media video, .hero-media img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0.85;
-}
-
-/* Fallback gradient cuando no hay video */
-.hero-fallback {
-  width: 100%; height: 100%;
-  background: linear-gradient(160deg, #1a1612 0%, #2d2520 40%, #1a1410 100%);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-
-.hero-fallback-text {
-  font-family: var(--serif);
-  font-size: clamp(80px, 15vw, 200px);
-  font-weight: 300;
-  color: rgba(196,168,130,0.12);
-  letter-spacing: 0.15em;
-  user-select: none;
-}
-
-.hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(13,13,11,0.75) 0%, transparent 50%);
-}
-
-.hero-content {
-  position: relative; z-index: 2;
-  padding: 0 4rem 5rem;
-  width: 100%;
-}
-
-.hero-eyebrow {
-  font-size: 9px; letter-spacing: 0.35em;
-  text-transform: uppercase; color: var(--accent);
-  display: block; margin-bottom: 1rem;
-  opacity: 0; animation: fadeUp 1s 0.3s forwards;
-}
-
-.hero-title {
-  font-family: var(--serif);
-  font-size: clamp(48px, 7vw, 96px);
-  font-weight: 300; line-height: 1.0;
-  color: #fff; letter-spacing: -0.01em;
-  opacity: 0; animation: fadeUp 1s 0.5s forwards;
-}
-
-.hero-title em { font-style: italic; color: var(--accent); }
-
-.hero-sub {
-  font-size: 12px; font-weight: 300;
-  letter-spacing: 0.08em; line-height: 1.8;
-  color: rgba(255,255,255,0.55);
-  max-width: 380px; margin-top: 1rem;
-  opacity: 0; animation: fadeUp 1s 0.7s forwards;
-}
-
-.hero-cta {
-  display: inline-block; margin-top: 2.5rem;
-  font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
-  color: #fff; text-decoration: none;
-  border-bottom: 0.5px solid rgba(255,255,255,0.5);
-  padding-bottom: 4px;
-  transition: color 0.2s, border-color 0.2s;
-  opacity: 0; animation: fadeUp 1s 0.9s forwards;
-  cursor: pointer; background: none; border-left: none; border-right: none; border-top: none;
-  font-family: var(--sans);
-}
-.hero-cta:hover { color: var(--accent); border-color: var(--accent); }
-
-.hero-scroll-hint {
-  position: absolute; bottom: 2.5rem; right: 3rem; z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  opacity: 0; animation: fadeIn 1s 1.5s forwards;
-}
-
-.scroll-line {
-  width: 0.5px; height: 50px;
-  background: rgba(255,255,255,0.4);
-  animation: scrollPulse 2s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0% { transform: scaleY(0); transform-origin: top; }
-  50% { transform: scaleY(1); transform-origin: top; }
-  51% { transform: scaleY(1); transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
-}
-
-.scroll-label {
-  font-size: 8px; letter-spacing: 0.3em;
-  text-transform: uppercase; color: rgba(255,255,255,0.4);
-  writing-mode: vertical-rl;
-}
-
-/* ── MARQUEE ── */
-.marquee-wrap {
-  overflow: hidden;
-  border-top: 0.5px solid rgba(13,13,11,0.12);
-  border-bottom: 0.5px solid rgba(13,13,11,0.12);
-  padding: 13px 0;
-  background: var(--black);
-}
-
-.marquee-track {
-  display: flex; gap: 3rem; width: max-content;
-  animation: marquee 18s linear infinite;
-}
-
-.marquee-item {
-  font-size: 9px; letter-spacing: 0.3em;
-  text-transform: uppercase; color: rgba(247,245,240,0.5);
-  white-space: nowrap; display: flex; align-items: center; gap: 1.5rem;
-}
-.marquee-item::after { content: '◆'; font-size: 5px; color: var(--accent); }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-/* ── REVEAL ON SCROLL ── */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-.reveal-left {
-  opacity: 0; transform: translateX(-40px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-.reveal-left.visible { opacity: 1; transform: translateX(0); }
-
-.reveal-right {
-  opacity: 0; transform: translateX(40px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-.reveal-right.visible { opacity: 1; transform: translateX(0); }
-
-/* ── PRODUCT SECTION ── */
-.product-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-}
-
-.product-visual {
-  position: sticky; top: 64px;
-  height: calc(100vh - 64px);
-  overflow: hidden;
-  background: var(--warm-gray);
-}
-
-.product-visual img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
-
-/* placeholder visual cuando no hay imagen */
-.product-visual-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(145deg, #E8E4DD 0%, #D4CECC 100%);
-}
-
-.placeholder-letter {
-  font-family: var(--serif);
-  font-size: 240px; font-weight: 300;
-  color: rgba(196,168,130,0.2);
-  user-select: none;
-  letter-spacing: -0.05em;
-}
-
-.product-info {
-  padding: 5rem 4rem;
-  display: flex; flex-direction: column;
-  justify-content: center;
-}
-
-.product-kicker {
-  font-size: 9px; letter-spacing: 0.3em;
-  text-transform: uppercase; color: var(--mid);
-  margin-bottom: 1.5rem;
-}
-
-.product-name-main {
-  font-family: var(--serif);
-  font-size: clamp(36px, 4vw, 64px);
-  font-weight: 300; line-height: 1.05;
-  color: var(--black);
-  margin-bottom: 0.5rem;
-}
-
-.product-name-main em { font-style: italic; color: var(--accent); }
-
-.product-tagline {
-  font-family: var(--serif);
-  font-size: 18px; font-weight: 300; font-style: italic;
-  color: var(--mid); margin-bottom: 2rem;
-}
-
-.divider {
-  width: 40px; height: 0.5px;
-  background: var(--accent); margin-bottom: 2rem;
-}
-
-.product-description {
-  font-size: 14px; font-weight: 300;
-  letter-spacing: 0.03em; line-height: 1.9;
-  color: rgba(13,13,11,0.65);
-  max-width: 420px; margin-bottom: 3rem;
-}
-
-.product-price-label {
-  font-size: 9px; letter-spacing: 0.25em;
-  text-transform: uppercase; color: var(--mid);
-  margin-bottom: 6px;
-}
-
-.product-price {
-  font-family: var(--serif);
-  font-size: 36px; font-weight: 300;
-  color: var(--black); margin-bottom: 2.5rem;
-}
-
-.product-price span { font-size: 16px; color: var(--mid); }
-
-/* Qty row */
-.qty-row {
-  display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;
-}
-
-.qty-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); }
-
-.qty-wrap {
-  display: flex; align-items: center; gap: 0;
-  border: 0.5px solid rgba(13,13,11,0.25);
-}
-
-.qty-btn-prod {
-  width: 38px; height: 38px;
-  background: none; border: none;
-  font-size: 18px; cursor: pointer; color: var(--black);
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
-.qty-btn-prod:hover { background: var(--warm-gray); }
-
-.qty-display {
-  width: 44px; text-align: center;
-  font-size: 16px; font-weight: 300; color: var(--black);
-  border-left: 0.5px solid rgba(13,13,11,0.15);
-  border-right: 0.5px solid rgba(13,13,11,0.15);
-  line-height: 38px;
-}
-
-.add-cart-btn {
-  width: 100%; max-width: 380px;
-  padding: 16px;
-  background: var(--black); color: var(--off-white);
-  border: none; font-family: var(--sans);
-  font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
-  cursor: pointer; transition: background 0.2s, letter-spacing 0.3s;
-  margin-bottom: 1rem;
-}
-.add-cart-btn:hover { background: #2a2a28; letter-spacing: 0.35em; }
-
-.details-list {
-  margin-top: 2.5rem;
-  border-top: 0.5px solid rgba(13,13,11,0.12);
-  padding-top: 2rem;
-}
-
-.detail-row {
-  display: flex; justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 0.5px solid rgba(13,13,11,0.06);
-  font-size: 12px;
-}
-
-.detail-row dt { color: var(--mid); letter-spacing: 0.05em; }
-.detail-row dd { color: var(--black); font-weight: 400; }
-
-/* ── EDITORIAL STRIP ── */
-.editorial {
-  background: var(--black);
-  padding: 8rem 4rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6rem; align-items: center;
-}
-
-.editorial-text .eyebrow {
-  font-size: 9px; letter-spacing: 0.3em;
-  text-transform: uppercase; color: var(--accent);
-  display: block; margin-bottom: 1.5rem;
-}
-
-.editorial-text h2 {
-  font-family: var(--serif);
-  font-size: clamp(36px, 4vw, 60px);
-  font-weight: 300; line-height: 1.1; color: var(--off-white);
-  margin-bottom: 1.5rem;
-}
-
-.editorial-text h2 em { font-style: italic; color: rgba(247,245,240,0.4); }
-
-.editorial-text p {
-  font-size: 13px; font-weight: 300;
-  line-height: 2; color: rgba(247,245,240,0.45);
-  max-width: 380px;
-}
-
-.editorial-visual {
-  position: relative; height: 500px; overflow: hidden;
-}
-
-.editorial-visual video, .editorial-visual img {
-  width: 100%; height: 100%; object-fit: cover;
-  opacity: 0.8;
-}
-
-.editorial-visual-placeholder {
-  width: 100%; height: 100%;
-  background: linear-gradient(145deg, #1a1814 0%, #2a2420 100%);
-  display: flex; align-items: center; justify-content: center;
-}
-
-.editorial-visual-placeholder span {
-  font-family: var(--serif);
-  font-size: 120px; color: rgba(196,168,130,0.15);
-  font-weight: 300;
-}
-
-/* ── CHECKOUT SECTION ── */
-.checkout-section {
-  padding: 8rem 4rem;
-  max-width: 960px; margin: 0 auto;
-}
-
-.checkout-title {
-  font-family: var(--serif);
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 300; color: var(--black);
-  margin-bottom: 0.5rem;
-}
-.checkout-title em { font-style: italic; color: var(--accent); }
-
-.checkout-subtitle {
-  font-size: 13px; color: var(--mid);
-  font-weight: 300; letter-spacing: 0.05em;
-  margin-bottom: 3rem;
-}
-
-/* Cart summary */
-.cart-summary-box {
-  background: var(--warm-gray);
-  padding: 2rem;
-  margin-bottom: 2.5rem;
-  display: none;
-}
-
-.cart-summary-box.has-items { display: block; }
-
-.cart-summary-title {
-  font-size: 9px; letter-spacing: 0.25em;
-  text-transform: uppercase; color: var(--mid);
-  margin-bottom: 1.2rem;
-}
-
-.cart-line {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 0;
-  border-bottom: 0.5px solid rgba(13,13,11,0.1);
-  font-size: 14px;
-}
-
-.cart-line-name { color: var(--black); font-weight: 400; }
-.cart-line-qty { color: var(--mid); font-size: 12px; margin-top: 2px; }
-.cart-line-price { font-family: var(--serif); font-size: 18px; font-weight: 300; }
-
-.cart-remove-btn {
-  background: none; border: none; color: rgba(13,13,11,0.3);
-  font-size: 18px; cursor: pointer; padding: 0 0 0 12px;
-  transition: color 0.2s;
-}
-.cart-remove-btn:hover { color: #c0392b; }
-
-.cart-total-row {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding-top: 1.2rem; margin-top: 0.5rem;
-}
-
-.cart-total-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid); }
-.cart-total-amount { font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--black); }
-
-/* Form */
-.checkout-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem;
-  margin-bottom: 2rem;
-}
-
-.field-full { grid-column: span 2; }
-
-.field-group { display: flex; flex-direction: column; gap: 6px; }
-
-.field-label {
-  font-size: 9px; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--mid); font-weight: 400;
-}
-
-.field-input {
-  background: transparent;
-  border: none;
-  border-bottom: 0.5px solid rgba(13,13,11,0.25);
-  padding: 10px 0;
-  font-family: var(--sans); font-size: 14px;
-  color: var(--black); outline: none;
-  transition: border-color 0.2s;
-  font-weight: 300;
-}
-.field-input::placeholder { color: rgba(13,13,11,0.3); }
-.field-input:focus { border-color: var(--black); }
-
-/* Delivery toggle */
-.delivery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-
-.delivery-opt {
-  border: 0.5px solid rgba(13,13,11,0.2);
-  padding: 1.5rem 1.2rem;
-  cursor: pointer; text-align: center;
-  transition: all 0.2s; user-select: none;
-  background: #fff;
-}
-.delivery-opt:hover { border-color: var(--black); }
-.delivery-opt.active { border-color: var(--black); background: var(--black); color: var(--off-white); }
-.delivery-opt .d-icon { font-size: 28px; display: block; margin-bottom: 8px; }
-.delivery-opt .d-title { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 400; }
-.delivery-opt .d-sub { font-size: 11px; color: var(--mid); margin-top: 4px; font-weight: 300; }
-.delivery-opt.active .d-sub { color: rgba(247,245,240,0.55); }
-
-#address-wrap { display: none; margin-bottom: 1.5rem; }
-
-.form-error {
-  font-size: 12px; color: #c0392b;
-  background: #fdf0f0; padding: 10px 14px;
-  margin-bottom: 1rem; display: none;
-}
-
-/* WA button */
-.wa-button {
-  width: 100%;
-  padding: 18px;
-  background: var(--wa); color: #fff;
-  border: none; font-family: var(--sans);
-  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-  font-weight: 500; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  transition: background 0.2s, transform 0.1s;
-}
-.wa-button:hover { background: #20ba57; }
-.wa-button:active { transform: scale(0.99); }
-.wa-button svg { flex-shrink: 0; }
-
-.wa-note {
-  font-size: 11px; color: var(--mid); text-align: center;
-  margin-top: 1rem; font-weight: 300; letter-spacing: 0.03em;
-}
-
-/* ── FOOTER ── */
-footer {
-  background: var(--black);
-  padding: 4rem;
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 3rem; align-items: start;
-  border-top: 0.5px solid rgba(247,245,240,0.1);
-}
-
-.footer-brand {
-  font-family: var(--serif);
-  font-size: 28px; font-weight: 300; letter-spacing: 0.2em;
-  color: var(--off-white); margin-bottom: 1rem;
-}
-
-.footer-tagline { font-size: 12px; color: rgba(247,245,240,0.35); font-weight: 300; line-height: 1.8; }
-
-.footer-col-title {
-  font-size: 9px; letter-spacing: 0.25em;
-  text-transform: uppercase; color: rgba(247,245,240,0.35);
-  margin-bottom: 1.2rem;
-}
-
-.footer-links { list-style: none; }
-.footer-links li { margin-bottom: 0.7rem; }
-.footer-links a {
-  font-size: 12px; font-weight: 300;
-  color: rgba(247,245,240,0.55); text-decoration: none;
-  transition: color 0.2s; letter-spacing: 0.05em;
-}
-.footer-links a:hover { color: var(--off-white); }
-
-.footer-bottom {
-  grid-column: span 3;
-  padding-top: 2rem;
-  border-top: 0.5px solid rgba(247,245,240,0.08);
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.footer-legal { font-size: 10px; color: rgba(247,245,240,0.25); letter-spacing: 0.05em; }
-
-/* ── TOAST ── */
-#toast {
-  position: fixed; bottom: 2rem; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--black); color: var(--off-white);
-  padding: 12px 28px; font-size: 12px;
-  letter-spacing: 0.1em; font-weight: 300;
-  z-index: 500; opacity: 0;
-  transition: all 0.35s; pointer-events: none;
-  white-space: nowrap;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── ANIMS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  body { cursor: auto; }
-  .cursor, .cursor-ring { display: none; }
-  nav { padding: 0 1.5rem; }
-  .logo { font-size: 20px; }
-  .nav-left .nav-link { display: none; }
-  .hero-content { padding: 0 1.5rem 4rem; }
-  .product-section { grid-template-columns: 1fr; }
-  .product-visual { position: relative; height: 60vw; top: 0; }
-  .product-info { padding: 2.5rem 1.5rem; }
-  .editorial { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 3rem; }
-  .editorial-visual { height: 300px; }
-  .checkout-section { padding: 4rem 1.5rem; }
-  .checkout-grid { grid-template-columns: 1fr; }
-  .field-full { grid-column: span 1; }
-  footer { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
-  .footer-bottom { grid-column: span 1; }
-}
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { overscroll-behavior-y: contain; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(0,255,136,0.06), transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, rgba(46,139,255,0.05), transparent 55%),
+      #0a0a0b;
+    background-attachment: fixed;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* Toggle */
+  .toggle { width: 52px; height: 30px; border-radius: 999px; background:#2a2a31; position:relative; transition:.25s; flex:none; }
+  .toggle::after { content:''; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:999px; background:#7a7a85; transition:.25s; }
+  .toggle.on { background: rgba(0,255,136,.25); }
+  .toggle.on::after { left:25px; background:#00ff88; box-shadow:0 0 12px rgba(0,255,136,.7); }
+
+  .glow { box-shadow: 0 0 0 1px rgba(0,255,136,.25), 0 0 24px rgba(0,255,136,.12); }
+  .ring-prog { transition: stroke-dashoffset .5s ease; }
+  @keyframes pop { 0%{transform:scale(.9);opacity:0} 100%{transform:scale(1);opacity:1} }
+  .pop { animation: pop .22s ease; }
+  @keyframes slideup { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .sheet-in { animation: slideup .28s cubic-bezier(.2,.8,.2,1); }
+  @keyframes fadein { from{opacity:0} to{opacity:1} }
+  .fade-in { animation: fadein .2s ease; }
+  .tap:active { transform: scale(.97); }
+  .seg-active { background: linear-gradient(180deg,#1c1c21,#141417); box-shadow: inset 0 0 0 1px #2a2a31; }
 </style>
 </head>
-<body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursor-ring"></div>
+<body class="font-body text-white min-h-screen antialiased">
 
-<!-- NAV -->
-<nav id="nav" class="hero-active">
-  <div class="nav-left">
-    <a class="nav-link" href="#producto">Colección</a>
-    <a class="nav-link" href="#checkout-section">Pedidos</a>
+<!-- ===== HEADER ===== -->
+<header class="sticky top-0 z-30 backdrop-blur-xl bg-ink/80 border-b border-line/60">
+  <div class="max-w-md mx-auto px-4 pt-3 pb-2.5 flex items-center justify-between">
+    <div>
+      <div class="font-display font-extrabold text-2xl leading-none tracking-tight">
+        MUTACIÓN <span class="text-neon">2026</span>
+      </div>
+      <div id="dateLabel" class="text-[11px] text-muted uppercase tracking-[0.18em] mt-0.5"></div>
+    </div>
+    <button id="settingsBtn" class="tap w-10 h-10 rounded-xl bg-panel border border-line flex items-center justify-center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a7a85" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
-  <a class="logo" href="#" style="display:flex;align-items:center;">
-    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" style="height:38px;width:auto;fill:currentColor;">
-      <g><path d="M535.28,369.71l.02,214.08c-10.88,1.16-23.94,3.19-31.52-6.01-4.58-5.55-4.6-16.69-5.42-25.39-30.18,20.18-82.59,51.29-119.77,29.92-14.34-8.24-25.48-25.96-25.52-43.66l-.42-168.82h36.34s.48,165.62.48,165.62c.06,19.39,14.62,32.77,33.49,32.62,28.44-.23,53.21-13.06,76.07-29.82l.06-168.27,36.2-.27Z"/><path d="M998.98,477.36c0,61.58-49.92,111.5-111.5,111.5s-111.5-49.92-111.5-111.5,49.92-111.5,111.5-111.5,111.5,49.92,111.5,111.5ZM974.25,508.98c6.47-62.05-60.9-132.53-130.13-115.26-23.64,5.9-39.05,24.5-42.56,48.26-9.5,64.31,54.17,126.2,113.95,123.2,31.95-1.6,55.36-23.77,58.74-56.21Z"/><path d="M194.12,468.8c24.83,7.63,43.54,25.6,47.21,47.23,4.43,26.09-5.69,49.98-27.82,63.49-9.78,5.97-23.56,11.13-35.46,11.14h-96.99s-.04-231.97-.04-231.97l77.84-.07c36.18-.03,70.18,26.58,65.47,65.87-2.15,17.96-13.37,32.37-30.21,44.31ZM190.21,395.44c-5.3-12.07-15.54-25.96-30.13-26.14l-49.16-.61-.08,97.36c16.15.27,30.79.42,46.61-.18,25.82-.98,47.18-37.6,32.76-70.43ZM207.32,553.3c9.3-21.28,6.47-43.91-7.47-61.47-7.32-9.22-19.07-15.36-31.03-15.35l-58.25.09-.1,104.12,57.84.07c17.6.02,31.92-11.23,39.01-27.46Z"/><path d="M756.03,584.68l-178.32-.17,129.19-201.44-114.43-.53.23-11.74c.04-1.9,5.99-1.05,8.28-1.04l155.35.85-129.19,201.39,128.53.67.36,12Z"/><path d="M293.22,596.09c-7.39-.39-13.64-5.98-13.82-12.88s5.86-12.52,13.11-13.61c8.15-1.22,15.77,5.41,16.26,11.84.7,9.25-5.89,15.17-15.55,14.65Z"/></g>
-      <g><path d="M393.82,715.79c0-3.25,2.41-5.4,5.33-5.4s5.33,2.15,5.33,5.4-2.41,5.4-5.33,5.4-5.33-2.28-5.33-5.4Z"/><path d="M412.29,700.89v-25.69h8.45v25.36c0,9.36,4.23,13.4,11.58,13.4s11.51-4.03,11.51-13.4v-25.36h8.32v25.69c0,13.27-7.48,20.49-19.9,20.49s-19.96-7.22-19.96-20.49Z"/><path d="M499.36,713.58v7.15h-38.83v-5.66l26.79-32.71h-26.34v-7.15h37.52v5.66l-26.79,32.71h27.64Z"/><path d="M503.32,697.97c0-13.46,10.41-23.41,24.52-23.41s24.52,9.89,24.52,23.41-10.41,23.41-24.52,23.41-24.52-9.95-24.52-23.41ZM543.84,697.97c0-9.3-6.83-16-16-16s-16,6.7-16,16,6.83,16,16,16,16-6.7,16-16Z"/><path d="M576.02,697.97c0-13.59,10.41-23.41,24.39-23.41,7.41,0,13.79,2.67,18.01,7.61l-5.46,5.14c-3.32-3.58-7.41-5.33-12.16-5.33-9.43,0-16.26,6.63-16.26,16s6.83,16,16.26,16c4.75,0,8.84-1.76,12.16-5.4l5.46,5.2c-4.23,4.94-10.6,7.61-18.08,7.61-13.92,0-24.32-9.82-24.32-23.41Z"/><path d="M622.32,697.97c0-13.46,10.41-23.41,24.52-23.41s24.52,9.89,24.52,23.41-10.41,23.41-24.52,23.41-24.52-9.95-24.52-23.41ZM662.84,697.97c0-9.3-6.83-16-16-16s-16,6.7-16,16,6.83,16,16,16,16-6.7,16-16Z"/><path d="M675.52,715.79c0-3.25,2.41-5.4,5.33-5.4s5.33,2.15,5.33,5.4-2.41,5.4-5.33,5.4-5.33-2.28-5.33-5.4Z"/></g>
-    </svg>
-  </a>
-  <div class="nav-right">
-    <button class="cart-pill" onclick="irCheckout()">
-      Mi pedido
-      <span class="cart-count-badge" id="cart-badge">0</span>
+</header>
+
+<main class="max-w-md mx-auto px-4 pb-28 pt-4">
+
+  <!-- ===== DELOAD BANNER ===== -->
+  <div id="deloadBanner" class="hidden mb-4 rounded-2xl border border-sport/40 bg-sport/10 px-4 py-3 flex items-center gap-3 fade-in">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2e8bff" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg>
+    <div class="text-sm leading-tight">
+      <div class="dl-title font-semibold text-sport">Semana de Descarga activa</div>
+      <div class="dl-sub text-[12px] text-sport/70">Series a la mitad · mismo peso · cardio reducido</div>
+    </div>
+  </div>
+
+  <!-- ===== VIEWS RENDER HERE ===== -->
+  <div id="view"></div>
+</main>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="fixed bottom-0 inset-x-0 z-30 backdrop-blur-xl bg-ink/90 border-t border-line/60" style="padding-bottom: env(safe-area-inset-bottom)">
+  <div class="max-w-md mx-auto grid grid-cols-3">
+    <button data-tab="hoy" class="navbtn tap py-3 flex flex-col items-center gap-1 text-neon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      <span class="text-[10px] font-semibold uppercase tracking-wider">Hoy</span>
+    </button>
+    <button data-tab="semana" class="navbtn tap py-3 flex flex-col items-center gap-1 text-muted">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="text-[10px] font-semibold uppercase tracking-wider">Semana</span>
+    </button>
+    <button data-tab="progreso" class="navbtn tap py-3 flex flex-col items-center gap-1 text-muted">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg>
+      <span class="text-[10px] font-semibold uppercase tracking-wider">Progreso</span>
     </button>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-media">
-    <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;object-position:center;">
-      <source src="buzo-video.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <span class="hero-eyebrow">Nueva Colección · 2025</span>
-    <h1 class="hero-title">
-      B<em>.uzo</em>
-    </h1>
-    <p class="hero-sub">El bolso artesanal que conquistó las redes. Un solo nombre, una sola pieza.</p>
-    <button class="hero-cta" onclick="irProducto()">Descubrir el bolso</button>
-  </div>
-  <div class="hero-scroll-hint">
-    <div class="scroll-line"></div>
-    <span class="scroll-label">Scroll</span>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">Nueva Colección 2025</span>
-    <span class="marquee-item">Hecho a Mano</span>
-    <span class="marquee-item">Entrega en Paraguay</span>
-    <span class="marquee-item">Pick Up · Delivery</span>
-    <span class="marquee-item">Pago en Guaraníes</span>
-    <span class="marquee-item">Stock Limitado</span>
-    <span class="marquee-item">Nueva Colección 2025</span>
-    <span class="marquee-item">Hecho a Mano</span>
-    <span class="marquee-item">Entrega en Paraguay</span>
-    <span class="marquee-item">Pick Up · Delivery</span>
-    <span class="marquee-item">Pago en Guaraníes</span>
-    <span class="marquee-item">Stock Limitado</span>
-  </div>
+<!-- ===== SHEET / MODAL CONTAINER ===== -->
+<div id="sheet" class="hidden fixed inset-0 z-50">
+  <div id="sheetBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div id="sheetBody" class="absolute bottom-0 inset-x-0 max-h-[88vh] overflow-y-auto bg-panel border-t border-line rounded-t-3xl sheet-in" style="padding-bottom: env(safe-area-inset-bottom)"></div>
 </div>
 
-<!-- PRODUCTO -->
-<section class="product-section" id="producto">
-  <div class="product-visual reveal-left">
-    <!--
-      REEMPLAZÁ con tu imagen real:
-      <img src="TU_FOTO_BOLSO.jpg" alt="Bolso .uzo"/>
-    -->
-    <div class="product-visual-placeholder">
-      <span class="placeholder-letter">.u</span>
-    </div>
-  </div>
-
-  <div class="product-info">
-    <div class="product-kicker reveal">Colección Principal · 2025</div>
-
-    <h2 class="product-name-main reveal">
-      B<em>.uzo</em>
-    </h2>
-    <div class="product-tagline reveal">El bolso de .uzo</div>
-
-    <div class="divider reveal"></div>
-
-    <p class="product-description reveal">
-      Tejido artesanalmente en fibras naturales de raffia, cada bolso es una pieza única con carácter propio.
-      Ligero, versátil y con una presencia que no pasa desapercibida.<br><br>
-      <!-- ACTUALIZÁ esta descripción con la real -->
-      Perfecto para el verano paraguayo y para cualquier temporada donde querés que tu estilo hable primero.
-    </p>
-
-    <div class="reveal">
-      <div class="product-price-label">Precio</div>
-      <!-- REEMPLAZÁ con el precio real -->
-      <div class="product-price">Gs. <span id="display-price">300.000</span></div>
-    </div>
-
-    <div class="qty-row reveal">
-      <span class="qty-label">Cantidad</span>
-      <div class="qty-wrap">
-        <button class="qty-btn-prod" onclick="cambiarQty(-1)">−</button>
-        <div class="qty-display" id="qty-display">1</div>
-        <button class="qty-btn-prod" onclick="cambiarQty(1)">+</button>
-      </div>
-    </div>
-
-    <button class="add-cart-btn reveal" onclick="agregarCarrito()">
-      Agregar al pedido
-    </button>
-
-    <dl class="details-list reveal">
-      <!-- ACTUALIZÁ con los detalles reales -->
-      <div class="detail-row">
-        <dt>Material</dt>
-        <dd>Raffia natural</dd>
-      </div>
-      <div class="detail-row">
-        <dt>Dimensiones</dt>
-        <dd><!-- Completar --></dd>
-      </div>
-      <div class="detail-row">
-        <dt>Origen</dt>
-        <dd><!-- Completar --></dd>
-      </div>
-      <div class="detail-row">
-        <dt>Entrega</dt>
-        <dd>Pick Up · Delivery Asunción</dd>
-      </div>
-    </dl>
-  </div>
-</section>
-
-<!-- EDITORIAL / VIDEO -->
-<section class="editorial">
-  <div class="editorial-text">
-    <span class="eyebrow reveal">El Momento .uzo</span>
-    <h2 class="reveal">Hecho para <em>ser visto</em></h2>
-    <p class="reveal">
-      Desde las redes hasta las calles de Asunción.
-      El bolso que todos quieren tener — y que muy pocos tienen.
-      <!-- ACTUALIZÁ este texto -->
-    </p>
-  </div>
-  <div class="editorial-visual reveal-right">
-    <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;">
-      <source src="buzo-video.mp4" type="video/mp4">
-    </video>
-  </div>
-</section>
-
-<!-- CHECKOUT -->
-<section class="checkout-section" id="checkout-section">
-  <h2 class="checkout-title reveal">Hacer mi <em>pedido</em></h2>
-  <p class="checkout-subtitle reveal">Completá tus datos y te enviamos la cuenta bancaria por WhatsApp.</p>
-
-  <!-- Resumen carrito -->
-  <div class="cart-summary-box" id="cart-box">
-    <div class="cart-summary-title">Tu pedido</div>
-    <div id="cart-lines"></div>
-    <div class="cart-total-row">
-      <span class="cart-total-label">Total</span>
-      <span class="cart-total-amount" id="total-display">Gs. 0</span>
-    </div>
-  </div>
-
-  <!-- Formulario -->
-  <div class="checkout-grid reveal">
-    <div class="field-group">
-      <label class="field-label">Nombre completo *</label>
-      <input class="field-input" type="text" id="f-nombre" placeholder="Tu nombre"/>
-    </div>
-    <div class="field-group">
-      <label class="field-label">Teléfono / WhatsApp *</label>
-      <input class="field-input" type="tel" id="f-tel" placeholder="0981 000 000"/>
-    </div>
-  </div>
-
-  <div class="reveal">
-    <div class="field-label" style="margin-bottom:1rem">Tipo de entrega *</div>
-    <div class="delivery-grid">
-      <div class="delivery-opt active" id="opt-pickup" onclick="selEntrega('pickup')">
-        <span class="d-icon">🏪</span>
-        <div class="d-title">Pick Up</div>
-        <div class="d-sub">Retirás vos</div>
-      </div>
-      <div class="delivery-opt" id="opt-delivery" onclick="selEntrega('delivery')">
-        <span class="d-icon">🛵</span>
-        <div class="d-title">Delivery</div>
-        <div class="d-sub">Te lo llevamos</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="address-wrap" class="reveal">
-    <div class="field-group">
-      <label class="field-label">Dirección de entrega *</label>
-      <input class="field-input" type="text" id="f-dir" placeholder="Calle, número, barrio..."/>
-    </div>
-  </div>
-
-  <div class="field-group reveal" style="margin-top:1.5rem; margin-bottom:2rem">
-    <label class="field-label">Nota (opcional)</label>
-    <input class="field-input" type="text" id="f-nota" placeholder="Algún comentario..."/>
-  </div>
-
-  <div class="form-error" id="form-error"></div>
-
-  <button class="wa-button reveal" onclick="enviarWA()">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-    </svg>
-    Enviar pedido por WhatsApp
-  </button>
-  <p class="wa-note reveal">Te respondemos con los datos de pago y confirmamos tu pedido.</p>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div>
-    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" style="height:50px;width:auto;fill:#F7F5F0;margin-bottom:1rem;display:block;">
-      <g><path d="M535.28,369.71l.02,214.08c-10.88,1.16-23.94,3.19-31.52-6.01-4.58-5.55-4.6-16.69-5.42-25.39-30.18,20.18-82.59,51.29-119.77,29.92-14.34-8.24-25.48-25.96-25.52-43.66l-.42-168.82h36.34s.48,165.62.48,165.62c.06,19.39,14.62,32.77,33.49,32.62,28.44-.23,53.21-13.06,76.07-29.82l.06-168.27,36.2-.27Z"/><path d="M998.98,477.36c0,61.58-49.92,111.5-111.5,111.5s-111.5-49.92-111.5-111.5,49.92-111.5,111.5-111.5,111.5,49.92,111.5,111.5ZM974.25,508.98c6.47-62.05-60.9-132.53-130.13-115.26-23.64,5.9-39.05,24.5-42.56,48.26-9.5,64.31,54.17,126.2,113.95,123.2,31.95-1.6,55.36-23.77,58.74-56.21Z"/><path d="M194.12,468.8c24.83,7.63,43.54,25.6,47.21,47.23,4.43,26.09-5.69,49.98-27.82,63.49-9.78,5.97-23.56,11.13-35.46,11.14h-96.99s-.04-231.97-.04-231.97l77.84-.07c36.18-.03,70.18,26.58,65.47,65.87-2.15,17.96-13.37,32.37-30.21,44.31ZM190.21,395.44c-5.3-12.07-15.54-25.96-30.13-26.14l-49.16-.61-.08,97.36c16.15.27,30.79.42,46.61-.18,25.82-.98,47.18-37.6,32.76-70.43ZM207.32,553.3c9.3-21.28,6.47-43.91-7.47-61.47-7.32-9.22-19.07-15.36-31.03-15.35l-58.25.09-.1,104.12,57.84.07c17.6.02,31.92-11.23,39.01-27.46Z"/><path d="M756.03,584.68l-178.32-.17,129.19-201.44-114.43-.53.23-11.74c.04-1.9,5.99-1.05,8.28-1.04l155.35.85-129.19,201.39,128.53.67.36,12Z"/><path d="M293.22,596.09c-7.39-.39-13.64-5.98-13.82-12.88s5.86-12.52,13.11-13.61c8.15-1.22,15.77,5.41,16.26,11.84.7,9.25-5.89,15.17-15.55,14.65Z"/></g>
-      <g><path d="M393.82,715.79c0-3.25,2.41-5.4,5.33-5.4s5.33,2.15,5.33,5.4-2.41,5.4-5.33,5.4-5.33-2.28-5.33-5.4Z"/><path d="M412.29,700.89v-25.69h8.45v25.36c0,9.36,4.23,13.4,11.58,13.4s11.51-4.03,11.51-13.4v-25.36h8.32v25.69c0,13.27-7.48,20.49-19.9,20.49s-19.96-7.22-19.96-20.49Z"/><path d="M499.36,713.58v7.15h-38.83v-5.66l26.79-32.71h-26.34v-7.15h37.52v5.66l-26.79,32.71h27.64Z"/><path d="M503.32,697.97c0-13.46,10.41-23.41,24.52-23.41s24.52,9.89,24.52,23.41-10.41,23.41-24.52,23.41-24.52-9.95-24.52-23.41ZM543.84,697.97c0-9.3-6.83-16-16-16s-16,6.7-16,16,6.83,16,16,16,16-6.7,16-16Z"/><path d="M576.02,697.97c0-13.59,10.41-23.41,24.39-23.41,7.41,0,13.79,2.67,18.01,7.61l-5.46,5.14c-3.32-3.58-7.41-5.33-12.16-5.33-9.43,0-16.26,6.63-16.26,16s6.83,16,16.26,16c4.75,0,8.84-1.76,12.16-5.4l5.46,5.2c-4.23,4.94-10.6,7.61-18.08,7.61-13.92,0-24.32-9.82-24.32-23.41Z"/><path d="M622.32,697.97c0-13.46,10.41-23.41,24.52-23.41s24.52,9.89,24.52,23.41-10.41,23.41-24.52,23.41-24.52-9.95-24.52-23.41ZM662.84,697.97c0-9.3-6.83-16-16-16s-16,6.7-16,16,6.83,16,16,16,16-6.7,16-16Z"/><path d="M675.52,715.79c0-3.25,2.41-5.4,5.33-5.4s5.33,2.15,5.33,5.4-2.41,5.4-5.33,5.4-5.33-2.28-5.33-5.4Z"/></g>
-    </svg>
-    <p class="footer-tagline">Bolsos artesanales.<br>Paraguay, 2025.</p>
-  </div>
-  <div>
-    <div class="footer-col-title">Navegación</div>
-    <ul class="footer-links">
-      <li><a href="#producto">El Bolso</a></li>
-      <li><a href="#checkout-section">Hacer pedido</a></li>
-    </ul>
-  </div>
-  <div>
-    <div class="footer-col-title">Contacto</div>
-    <ul class="footer-links">
-      <li><a href="https://wa.me/595981613925">WhatsApp</a></li>
-      <li><a href="#">Instagram</a></li>
-    </ul>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-legal">© 2025 .uzo — Todos los derechos reservados</span>
-  </div>
-</footer>
-
-<div id="toast"></div>
+<!-- ===== TOAST ===== -->
+<div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 bottom-24 z-[60] px-4 py-2.5 rounded-full bg-panel2 border border-neon/40 glow text-sm font-medium pop"></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────
-const WA = '595981613925';
+/* =========================================================
+   ESTADO Y PERSISTENCIA
+   ========================================================= */
+const STORAGE_KEY = 'mutacion2026_v1';
+const DAYS = ['dom','lun','mar','mie','jue','vie','sab'];
+const DAY_NAMES = {lun:'Lunes',mar:'Martes',mie:'Miércoles',jue:'Jueves',vie:'Viernes',sab:'Sábado',dom:'Domingo'};
 
-// PRODUCTO — EDITÁ ESTOS VALORES
-const PRODUCTO = {
-  nombre: 'B.uzo',
-  precio: 300000,
-  descripcion: 'Bolso artesanal .uzo',
-};
+/* Rutina por defecto (editable por el usuario) */
+function defaultRoutine() {
+  return {
+    lun: { type:'strength', title:'Empuje · Push', accent:'neon', exercises:[
+      ex('Press de Banca Plano con Barra','Press de Banca Plano con Mancuernas',4,6,8,'90-120s'),
+      ex('Press Inclinado con Mancuernas','Press Inclinado en Máquina / Barra',3,8,10,'90s'),
+      ex('Aperturas en Banco Plano / Pec Deck','Cruces de Polea Alta a Baja',3,10,12,'60-90s'),
+      ex('Press Militar con Barra de Pie','Press de Hombros con Mancuernas Sentado',3,6,8,'90-120s'),
+      ex('Elevaciones Laterales con Mancuerna','Elevaciones Laterales en Polea Baja',4,12,15,'45-60s'),
+      ex('Extensión de Tríceps en Polea con Soga','Press Francés con Barra Z / Recta',3,10,12,'60s'),
+    ]},
+    mar: { type:'running', title:'Running · Zona 2', durMin:30, durMax:40, pulseMax:null,
+      note:'Paso aeróbico cómodo (conversacional). Suma pasos hacia los 10.000.' },
+    mie: { type:'strength', title:'Piernas · Base', accent:'neon', exercises:[
+      ex('Prensa de Piernas Bilateral','Sentadilla Hack / Goblet pesada',3,8,10,'90-120s'),
+      ex('Sillón de Isquios / Leg Curl','Peso Muerto Rumano con Mancuernas',3,10,12,'90s'),
+      ex('Extensión de Cuádriceps en Máquina','Zancadas Estáticas con Apoyo',3,12,12,'60-90s'),
+      ex('Elevación de Talones / Gemelos de Pie','Elevación de Talones en Prensa / Sentado',4,15,15,'45-60s'),
+      ex('Rueda Abdominal / Crunch en Polea','Plancha Isométrica (45 seg)',3,10,12,'60s'),
+    ]},
+    jue: { type:'running', title:'Running · Lavado Activo', durMin:45, durMax:50, pulseMax:145,
+      note:'Regenerativo muy lento. Tope estricto de pulso: < 145 bpm.' },
+    vie: { type:'strength', title:'Tirón · Pull', accent:'neon', exercises:[
+      ex('Dominadas Asistidas / Jalón al Pecho','Remo Gironda en Polea (agarre cerrado)',4,6,8,'90-120s'),
+      ex('Remo con Barra Inclinado / en Máquina','Remo Unilateral con Mancuerna',4,6,8,'90-120s'),
+      ex('Pullover en Polea Alta con Soga','Pullover con Mancuerna en Banco Plano',3,12,12,'60-90s'),
+      ex('Extensiones Lumbares en Banco','Puente de Glúteos / Hip Thrust pesado',3,12,12,'60-90s'),
+      ex('Curl de Bíceps con Barra Z','Curl Alterno con Mancuernas',3,8,10,'60s'),
+      ex('Curl Martillo con Mancuernas','Curl Martillo en Polea Baja con Soga',3,10,10,'60s'),
+    ]},
+    sab: { type:'running', title:'Fondo Largo / Caminata', durMin:60, durMax:90, pulseMax:148,
+      note:'12 km a paso aeróbico puro (< 148 bpm) o caminata larga para romper los 10.000 pasos.' },
+    dom: { type:'rest', title:'Descanso Absoluto', note:'Bloqueo total para reparación muscular.' },
+  };
+}
 
-// ── ESTADO ────────────────────────────────────────────
-let qty = 1;
-let entrega = 'pickup';
-let carrito = []; // [{nombre, precio, qty}]
+function ex(name, alt, sets, repMin, repMax, rest) {
+  return { id: 'e'+Math.random().toString(36).slice(2,9), name, alt, sets, repMin, repMax, rest, swapped:false };
+}
 
-// ── CURSOR ────────────────────────────────────────────
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-  ring.style.left = e.clientX + 'px';
-  ring.style.top = e.clientY + 'px';
-});
+let state = load();
 
-// ── NAV SCROLL ────────────────────────────────────────
-const nav = document.getElementById('nav');
-const hero = document.getElementById('hero');
-const io = new IntersectionObserver(([e]) => {
-  nav.classList.toggle('hero-active', e.isIntersecting);
-  nav.classList.toggle('scrolled', !e.isIntersecting);
-}, { threshold: 0.1 });
-io.observe(hero);
+function load() {
+  let s = null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { const p = JSON.parse(raw); if (p && p.routine) s = p; }
+  } catch(e) {}
+  if (!s) s = { version:1, units:'kg', deload:false, stepGoal:10000, routine: defaultRoutine(), logs:{}, targets:{} };
+  // Migración / valores por defecto de periodización automática
+  if (s.autoPeriodization === undefined) s.autoPeriodization = true; // automático activado por defecto
+  if (s.cycleLength === undefined) s.cycleLength = 3;   // semanas duras antes de la descarga
+  if (s.weekThreshold === undefined) s.weekThreshold = 3; // días mínimos para contar una semana
+  return s;
+}
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e) { toast('⚠️ No se pudo guardar (almacenamiento lleno)'); }
+}
 
-// ── SCROLL REVEAL ─────────────────────────────────────
-const revealObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      revealObs.unobserve(e.target);
-    }
+/* =========================================================
+   UTILIDADES DE FECHA Y LOGS
+   ========================================================= */
+function todayKey(d=new Date()){ return d.toISOString().slice(0,10); }
+function dayCode(d=new Date()){ return DAYS[d.getDay()]; }
+function getLog(key){ if(!state.logs[key]) state.logs[key]={steps:0,running:null,strength:{}}; return state.logs[key]; }
+function target(exId){ return state.targets[exId] || {weight:0, reps:null}; }
+function effectiveSets(sets){ return isDeloadActive() ? Math.max(1, Math.round(sets/2)) : sets; }
+
+/* ---- PERIODIZACIÓN AUTOMÁTICA ---- */
+function isoWeek(d){
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day);
+  const ys=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  const wk=Math.ceil((((t-ys)/86400000)+1)/7);
+  return t.getUTCFullYear()+'-W'+String(wk).padStart(2,'0');
+}
+function dayWasTrained(l){
+  if(!l) return false;
+  if(l.running && l.running.done) return true;
+  if(l.strength && Object.values(l.strength).some(x=> x.sets && x.sets.some(s=> s && s.reps))) return true;
+  return false;
+}
+function weeklyTraining(){
+  const weeks={};
+  Object.entries(state.logs).forEach(([dk,l])=>{
+    if(dayWasTrained(l)){ const wk=isoWeek(new Date(dk+'T12:00:00')); (weeks[wk]=weeks[wk]||new Set()).add(dk); }
   });
-}, { threshold: 0.12 });
+  return weeks;
+}
+function completedTrainingWeeks(){
+  const weeks=weeklyTraining(); const cur=isoWeek(new Date()); let n=0;
+  Object.entries(weeks).forEach(([wk,days])=>{ if(wk<cur && days.size>=state.weekThreshold) n++; });
+  return n;
+}
+function currentPhase(){
+  const L=Math.max(2, state.cycleLength);
+  const pos = completedTrainingWeeks() % (L+1); // 0..L  (L = semana de descarga)
+  const isDeload = pos===L;
+  const daysThisWeek = (weeklyTraining()[isoWeek(new Date())]||new Set()).size;
+  let name, desc, rir;
+  if(isDeload){
+    name='Descarga'; rir='—';
+    desc='Recuperación: series a la mitad con el mismo peso y cardio reducido. Dejá que el sistema nervioso y las articulaciones se recuperen para volver más fuerte.';
+  } else {
+    const wk=pos+1;
+    if(wk===1){ name='Adaptación'; rir='3-4'; desc='Arrancá controlado. Dejá 3-4 reps en reserva y quedate en el extremo bajo del rango. Técnica impecable, sin buscar el fallo.'; }
+    else if(wk===L){ name='Intensificación'; rir='0-1'; desc='Semana fuerte. Series cerca del fallo (0-1 reps en reserva) y buscá el tope del rango para disparar la progresión de peso.'; }
+    else { name='Acumulación'; rir='2'; desc='Subí la exigencia: ~2 reps en reserva, acercándote al tope de repeticiones cada serie.'; }
+  }
+  return { pos, week:pos+1, total:L, isDeload, name, desc, rir, daysThisWeek };
+}
+function isDeloadActive(){ return state.autoPeriodization ? currentPhase().isDeload : !!state.deload; }
 
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
-  revealObs.observe(el);
-});
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+let currentTab = 'hoy';
+function setTab(t){
+  currentTab = t;
+  document.querySelectorAll('.navbtn').forEach(b=>{
+    b.classList.toggle('text-neon', b.dataset.tab===t);
+    b.classList.toggle('text-muted', b.dataset.tab!==t);
+  });
+  render();
+}
+document.querySelectorAll('.navbtn').forEach(b=> b.onclick = ()=> setTab(b.dataset.tab));
 
-// ── PRECIO DISPLAY ────────────────────────────────────
-document.getElementById('display-price').textContent =
-  PRODUCTO.precio > 0
-    ? Math.round(PRODUCTO.precio).toLocaleString('es-PY')
-    : '— consultar';
+/* =========================================================
+   RENDER PRINCIPAL
+   ========================================================= */
+function render(){
+  const dl = document.getElementById('deloadBanner');
+  const active = isDeloadActive();
+  dl.classList.toggle('hidden', !active);
+  if(active){
+    const auto = state.autoPeriodization;
+    dl.querySelector('.dl-title').textContent = auto ? 'Semana de Descarga (automática)' : 'Semana de Descarga activa';
+    dl.querySelector('.dl-sub').textContent = 'Series a la mitad · mismo peso · cardio reducido';
+  }
+  document.getElementById('dateLabel').textContent =
+    new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
 
-// ── QTY ───────────────────────────────────────────────
-function cambiarQty(d) {
-  qty = Math.max(1, qty + d);
-  document.getElementById('qty-display').textContent = qty;
+  const v = document.getElementById('view');
+  if (currentTab==='hoy') v.innerHTML = viewToday();
+  else if (currentTab==='semana') v.innerHTML = viewWeek();
+  else v.innerHTML = viewProgress();
+  bindView();
 }
 
-// ── CARRITO ───────────────────────────────────────────
-function agregarCarrito() {
-  const existente = carrito.find(i => i.nombre === PRODUCTO.nombre);
-  if (existente) existente.qty += qty;
-  else carrito.push({ nombre: PRODUCTO.nombre, precio: PRODUCTO.precio, qty });
-  actualizarCarrito();
-  toast(`✓ ${PRODUCTO.nombre} — ${qty} unidad${qty > 1 ? 'es' : ''} agregada${qty > 1 ? 's' : ''}`);
-}
+/* ---------- VISTA HOY ---------- */
+function viewToday(){
+  const code = dayCode();
+  const day = state.routine[code];
+  const log = getLog(todayKey());
 
-function actualizarCarrito() {
-  const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
-  const badge = document.getElementById('cart-badge');
-  const box = document.getElementById('cart-box');
-  const lines = document.getElementById('cart-lines');
-  const totalEl = document.getElementById('total-display');
+  let html = phaseStrip();
+  html += stepWidget(log);
 
-  badge.textContent = carrito.reduce((s, i) => s + i.qty, 0);
+  if (day.type==='rest'){
+    html += `<div class="mt-4 rounded-2xl border border-line bg-panel p-6 text-center fade-in">
+      <div class="text-5xl mb-2">🛌</div>
+      <div class="font-display text-2xl font-bold">${day.title}</div>
+      <div class="text-sm text-muted mt-1">${day.note}</div>
+    </div>`;
+    return html;
+  }
 
-  if (carrito.length === 0) { box.classList.remove('has-items'); return; }
-  box.classList.add('has-items');
+  if (day.type==='running'){
+    html += runningCard(code, day, log, true);
+    return html;
+  }
 
-  lines.innerHTML = carrito.map((item, i) => `
-    <div class="cart-line">
+  // strength
+  html += `<div class="mt-4 flex items-center justify-between">
       <div>
-        <div class="cart-line-name">${item.nombre}</div>
-        <div class="cart-line-qty">${item.qty} unidad${item.qty > 1 ? 'es' : ''}</div>
+        <div class="text-[11px] uppercase tracking-[0.2em] text-neon font-semibold">${DAY_NAMES[code]}</div>
+        <div class="font-display text-3xl font-extrabold leading-none">${day.title}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="cart-line-price">Gs. ${Math.round(item.precio * item.qty).toLocaleString('es-PY')}</span>
-        <button class="cart-remove-btn" onclick="quitarItem(${i})">✕</button>
+      <button class="editDay tap px-3 py-2 rounded-xl bg-panel border border-line text-xs font-semibold text-muted flex items-center gap-1.5" data-day="${code}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+        Editar
+      </button>
+    </div>`;
+
+  html += `<div class="mt-4 space-y-3">`;
+  day.exercises.forEach((e,i)=> html += exerciseCard(code, e, i, log));
+  html += `</div>`;
+  return html;
+}
+
+function phaseStrip(){
+  if(!state.autoPeriodization){
+    const on = !!state.deload;
+    return `<div class="mb-4 rounded-2xl border border-line bg-panel px-4 py-3 fade-in flex items-center justify-between">
+      <div>
+        <div class="text-[11px] uppercase tracking-[0.18em] text-muted">Periodización manual</div>
+        <div class="font-display text-lg font-bold ${on?'text-sport':''}">${on?'Descarga activada':'Carga normal'}</div>
+      </div>
+      <div class="text-[11px] text-muted text-right max-w-[45%]">Activá el modo automático en Ajustes para que la app maneje las descargas sola.</div>
+    </div>`;
+  }
+  const p=currentPhase();
+  const dots = Array.from({length:p.total+1}).map((_,i)=>{
+    const isD = i===p.total;
+    const cur = i===p.pos;
+    const cls = cur ? (p.isDeload?'bg-sport':'bg-neon') : (i<p.pos?'bg-neon/40':'bg-line');
+    return `<div class="flex-1 h-1.5 rounded-full ${cls}" title="${isD?'Descarga':'Semana '+(i+1)}"></div>`;
+  }).join('');
+  const accent = p.isDeload ? 'sport' : 'neon';
+  return `
+  <div class="mb-4 rounded-2xl border ${p.isDeload?'border-sport/40':'border-line'} bg-panel p-4 fade-in">
+    <div class="flex items-center justify-between mb-2.5">
+      <div class="text-[11px] uppercase tracking-[0.18em] text-muted">Mesociclo · automático</div>
+      <div class="text-[11px] text-muted tnum">${p.daysThisWeek} ${p.daysThisWeek===1?'día':'días'} esta semana</div>
+    </div>
+    <div class="flex gap-1.5 mb-3">${dots}</div>
+    <div class="flex items-baseline justify-between">
+      <div class="font-display text-2xl font-extrabold">${p.isDeload?'Descarga':'Semana '+p.week+' de '+p.total}</div>
+      <div class="px-2.5 py-1 rounded-lg bg-${accent}/10 text-${accent} text-sm font-bold">${p.name}</div>
+    </div>
+    ${p.isDeload?'':`<div class="text-[12px] mt-1.5">Esfuerzo objetivo: <span class="text-${accent} font-semibold">RIR ${p.rir}</span> <span class="text-muted">(reps en reserva)</span></div>`}
+    <div class="text-[12px] text-muted mt-1.5 leading-snug">${p.desc}</div>
+  </div>`;
+}
+
+function stepWidget(log){
+  const goal = state.stepGoal;
+  const steps = log.steps||0;
+  const pct = Math.min(1, steps/goal);
+  const r=42, c=2*Math.PI*r, off=c*(1-pct);
+  const done = steps>=goal;
+  return `
+  <div class="rounded-2xl border ${done?'border-neon/50 glow':'border-line'} bg-panel p-4 fade-in">
+    <div class="flex items-center gap-4">
+      <div class="relative" style="width:104px;height:104px">
+        <svg width="104" height="104" viewBox="0 0 104 104" class="-rotate-90">
+          <circle cx="52" cy="52" r="42" fill="none" stroke="#2a2a31" stroke-width="9"/>
+          <circle class="ring-prog" cx="52" cy="52" r="42" fill="none" stroke="${done?'#00ff88':'#2e8bff'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <div class="font-mono font-bold text-xl tnum leading-none">${(steps/1000).toFixed(1)}k</div>
+          <div class="text-[9px] text-muted uppercase tracking-wider">pasos</div>
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="text-[11px] uppercase tracking-[0.18em] text-muted">Meta diaria</div>
+        <div class="font-display text-2xl font-bold tnum">${steps.toLocaleString('es')} <span class="text-muted text-lg">/ ${goal.toLocaleString('es')}</span></div>
+        <div class="flex gap-2 mt-2">
+          <button class="stepBtn tap flex-1 py-2 rounded-xl bg-panel2 border border-line font-bold text-sm tnum" data-add="1000">+1.000</button>
+          <button class="stepBtn tap flex-1 py-2 rounded-xl bg-panel2 border border-line font-bold text-sm tnum" data-add="2500">+2.500</button>
+          <button class="stepEdit tap w-10 py-2 rounded-xl bg-panel2 border border-line font-bold text-muted">✎</button>
+        </div>
       </div>
     </div>
-  `).join('');
-
-  totalEl.textContent = 'Gs. ' + Math.round(total).toLocaleString('es-PY');
+    ${done?`<div class="mt-3 text-center text-neon text-sm font-semibold">✓ Meta de pasos alcanzada</div>`:''}
+  </div>`;
 }
 
-function quitarItem(i) { carrito.splice(i, 1); actualizarCarrito(); }
-
-// ── ENTREGA ───────────────────────────────────────────
-function selEntrega(tipo) {
-  entrega = tipo;
-  document.getElementById('opt-pickup').classList.toggle('active', tipo === 'pickup');
-  document.getElementById('opt-delivery').classList.toggle('active', tipo === 'delivery');
-  document.getElementById('address-wrap').style.display = tipo === 'delivery' ? 'block' : 'none';
+function runningCard(code, day, log, big){
+  const done = log.running && log.running.done;
+  const pulse = day.pulseMax ? `<span class="text-sport font-semibold">&lt; ${day.pulseMax} bpm</span>` : 'conversacional';
+  const dur = isDeloadActive()
+    ? `${Math.round(day.durMin/2)}-${Math.round(day.durMax/2)} min <span class="text-sport text-xs">(descarga)</span>`
+    : `${day.durMin}-${day.durMax} min`;
+  return `
+  <div class="mt-4 rounded-2xl border ${done?'border-neon/50 glow':'border-line'} bg-panel p-5 fade-in">
+    <div class="text-[11px] uppercase tracking-[0.2em] text-sport font-semibold">${DAY_NAMES[code]}</div>
+    <div class="font-display text-3xl font-extrabold leading-none mt-0.5">${day.title}</div>
+    <div class="flex items-center gap-5 mt-4">
+      <div><div class="text-[10px] text-muted uppercase tracking-wider">Duración</div><div class="font-mono font-bold text-lg tnum">${dur}</div></div>
+      <div class="w-px h-9 bg-line"></div>
+      <div><div class="text-[10px] text-muted uppercase tracking-wider">Pulso</div><div class="font-mono font-bold text-lg">${pulse}</div></div>
+    </div>
+    <div class="text-sm text-muted mt-3 leading-snug">${day.note}</div>
+    <div class="mt-4 flex items-center gap-3">
+      <input type="number" inputmode="numeric" id="runMin" placeholder="min" value="${log.running?.minutes||''}" class="w-24 bg-panel2 border border-line rounded-xl px-3 py-2.5 font-mono tnum text-center focus:border-sport outline-none">
+      <button id="runDone" class="tap flex-1 py-2.5 rounded-xl font-bold ${done?'bg-neon text-ink':'bg-sport text-white'}">
+        ${done? '✓ Sesión validada' : 'Validar sesión'}
+      </button>
+    </div>
+  </div>`;
 }
 
-// ── WHATSAPP ──────────────────────────────────────────
-function enviarWA() {
-  const nombre = document.getElementById('f-nombre').value.trim();
-  const tel    = document.getElementById('f-tel').value.trim();
-  const dir    = document.getElementById('f-dir').value.trim();
-  const nota   = document.getElementById('f-nota').value.trim();
-  const errEl  = document.getElementById('form-error');
+function exerciseCard(code, e, idx, log){
+  const name = e.swapped ? e.alt : e.name;
+  const altName = e.swapped ? e.name : e.alt;
+  const sets = effectiveSets(e.sets);
+  const t = target(e.id);
+  const logSets = (log.strength[e.id] && log.strength[e.id].sets) || [];
+  const range = e.repMin===e.repMax ? `${e.repMin}` : `${e.repMin}-${e.repMax}`;
+  const tgtTxt = t.weight>0
+    ? `Objetivo: <span class="text-neon font-semibold tnum">${t.weight} ${state.units}</span> × ${t.reps||e.repMin}+`
+    : `Sin registro previo · apunta a ${range} reps`;
 
-  if (carrito.length === 0) { mostrarError('Agregá al menos un producto antes de continuar.'); return; }
-  if (!nombre) { mostrarError('Por favor ingresá tu nombre.'); return; }
-  if (!tel)    { mostrarError('Por favor ingresá tu número de teléfono.'); return; }
-  if (entrega === 'delivery' && !dir) { mostrarError('Por favor ingresá tu dirección de entrega.'); return; }
-  errEl.style.display = 'none';
+  let rows='';
+  for(let s=0;s<sets;s++){
+    const ls = logSets[s]||{};
+    rows += `
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-panel border border-line flex items-center justify-center text-xs font-bold text-muted">${s+1}</div>
+      <input type="number" inputmode="decimal" placeholder="${t.weight||'kg'}" value="${ls.weight??''}"
+        class="setIn flex-1 min-w-0 bg-panel border border-line rounded-lg px-2.5 py-2 font-mono tnum text-center focus:border-neon outline-none"
+        data-ex="${e.id}" data-set="${s}" data-f="weight">
+      <span class="text-muted text-xs">×</span>
+      <input type="number" inputmode="numeric" placeholder="reps" value="${ls.reps??''}"
+        class="setIn flex-1 min-w-0 bg-panel border border-line rounded-lg px-2.5 py-2 font-mono tnum text-center focus:border-neon outline-none"
+        data-ex="${e.id}" data-set="${s}" data-f="reps">
+    </div>`;
+  }
 
-  const total = carrito.reduce((s, i) => s + i.precio * i.qty, 0);
+  return `
+  <div class="rounded-2xl border border-line bg-panel overflow-hidden fade-in" data-card="${e.id}">
+    <div class="px-4 pt-3.5 pb-3 bg-gradient-to-b from-panel2 to-panel border-b border-line/60">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <div class="font-display text-lg font-bold leading-tight truncate">${name}</div>
+          <div class="text-[12px] text-muted mt-0.5">${tgtTxt}</div>
+        </div>
+        <button class="swapBtn tap flex-none w-9 h-9 rounded-xl bg-panel border border-line flex items-center justify-center" data-ex="${e.id}" title="Alternar: ${altName}">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center gap-3 mt-2 text-[11px]">
+        <span class="px-2 py-0.5 rounded-md bg-neon/10 text-neon font-bold tnum">${sets}×${range}</span>
+        <span class="text-muted">Descanso ${e.rest}</span>
+        ${e.swapped?`<span class="text-sport font-medium">↔ alternativa</span>`:''}
+      </div>
+    </div>
+    <div class="p-4 space-y-2">
+      ${rows}
+      <button class="logBtn tap w-full mt-1 py-2.5 rounded-xl bg-panel2 border border-line font-bold text-sm" data-ex="${e.id}">
+        Guardar serie
+      </button>
+    </div>
+  </div>`;
+}
 
-  let msg = `🛍️ *NUEVO PEDIDO — .uzo*\n\n`;
-  msg += `👤 *Nombre:* ${nombre}\n`;
-  msg += `📱 *Teléfono:* ${tel}\n`;
-  msg += `📦 *Entrega:* ${entrega === 'pickup' ? '🏪 Pick Up' : '🛵 Delivery'}\n`;
-  if (entrega === 'delivery') msg += `📍 *Dirección:* ${dir}\n`;
-  msg += `\n*PRODUCTOS:*\n`;
-  carrito.forEach(i => {
-    msg += `• ${i.nombre} × ${i.qty}`;
-    if (i.precio > 0) msg += ` — Gs. ${Math.round(i.precio * i.qty).toLocaleString('es-PY')}`;
-    msg += `\n`;
+/* ---------- VISTA SEMANA ---------- */
+function viewWeek(){
+  const order=['lun','mar','mie','jue','vie','sab','dom'];
+  const today = dayCode();
+  let html = `<div class="space-y-3 pt-1">`;
+  order.forEach(code=>{
+    const d = state.routine[code];
+    const isToday = code===today;
+    let tag, accent, detail;
+    if(d.type==='strength'){ tag='FUERZA'; accent='neon'; detail=`${d.exercises.length} ejercicios`; }
+    else if(d.type==='running'){ tag='CARDIO'; accent='sport'; detail=`${d.durMin}-${d.durMax} min · Z2`; }
+    else { tag='OFF'; accent='muted'; detail='Descanso'; }
+    html += `
+    <button class="weekDay tap w-full text-left rounded-2xl border ${isToday?'border-neon/50 glow':'border-line'} bg-panel p-4 flex items-center gap-3" data-day="${code}">
+      <div class="w-12 flex-none text-center">
+        <div class="font-display font-extrabold text-2xl leading-none ${isToday?'text-neon':''}">${DAY_NAMES[code].slice(0,3)}</div>
+      </div>
+      <div class="w-px h-10 bg-line"></div>
+      <div class="flex-1 min-w-0">
+        <div class="font-display text-lg font-bold leading-tight truncate">${d.title}</div>
+        <div class="text-[12px] text-muted">${detail}</div>
+      </div>
+      <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-${accent}/10 text-${accent}">${tag}</span>
+    </button>`;
   });
-  if (total > 0) msg += `\n💰 *TOTAL: Gs. ${Math.round(total).toLocaleString('es-PY')}*`;
-  if (nota) msg += `\n\n📝 *Nota:* ${nota}`;
-  msg += `\n\n_Pedido realizado desde uzo.com_`;
-
-  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`, '_blank');
+  html += `</div>
+  <div class="mt-4 text-center text-xs text-muted">Tocá un día de fuerza para ver o editar sus ejercicios.</div>`;
+  return html;
 }
 
-function mostrarError(msg) {
-  const el = document.getElementById('form-error');
-  el.textContent = msg; el.style.display = 'block';
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+/* ---------- VISTA PROGRESO ---------- */
+function viewProgress(){
+  // Recolectar PRs por ejercicio (mejor peso registrado)
+  const exNames = {};
+  Object.values(state.routine).forEach(d=>{ if(d.exercises) d.exercises.forEach(e=> exNames[e.id]=e.name); });
+  const prs = {};
+  Object.values(state.logs).forEach(l=>{
+    Object.entries(l.strength||{}).forEach(([id,data])=>{
+      (data.sets||[]).forEach(s=>{
+        const w=parseFloat(s.weight)||0;
+        if(w>0 && (!prs[id]||w>prs[id])) prs[id]=w;
+      });
+    });
+  });
+
+  // Pasos últimos 7 días
+  let stepsHtml='';
+  const bars=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const l=state.logs[todayKey(d)];
+    bars.push({label:DAY_NAMES[DAYS[d.getDay()]].slice(0,2), steps:l?.steps||0});
+  }
+  const maxS=Math.max(state.stepGoal, ...bars.map(b=>b.steps));
+  stepsHtml = bars.map(b=>{
+    const h=Math.max(4, (b.steps/maxS)*88);
+    const hit=b.steps>=state.stepGoal;
+    return `<div class="flex-1 flex flex-col items-center gap-1">
+      <div class="w-full flex items-end justify-center" style="height:88px">
+        <div class="w-5 rounded-t-md ${hit?'bg-neon':'bg-sport/60'}" style="height:${h}px"></div>
+      </div>
+      <div class="text-[10px] text-muted">${b.label}</div>
+    </div>`;
+  }).join('');
+
+  let prHtml='';
+  const prKeys=Object.keys(prs);
+  if(prKeys.length){
+    prHtml = prKeys.map(id=>`
+      <div class="flex items-center justify-between py-2.5 border-b border-line/50 last:border-0">
+        <span class="text-sm truncate pr-3">${exNames[id]||'Ejercicio'}</span>
+        <span class="font-mono font-bold text-neon tnum flex-none">${prs[id]} ${state.units}</span>
+      </div>`).join('');
+  } else {
+    prHtml = `<div class="text-center text-muted text-sm py-6">Registrá tus series para ver tus marcas máximas acá.</div>`;
+  }
+
+  // Racha de días con entrenamiento registrado
+  let streak=0;
+  for(let i=0;i<60;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const l=state.logs[todayKey(d)];
+    const trained = l && ((l.running&&l.running.done) || (l.strength&&Object.keys(l.strength).length) || (l.steps>=state.stepGoal));
+    if(trained) streak++; else if(i>0) break;
+  }
+
+  return `
+  <div class="pt-1 space-y-4">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-2xl border border-line bg-panel p-4">
+        <div class="text-[11px] uppercase tracking-wider text-muted">Racha</div>
+        <div class="font-display text-4xl font-extrabold text-neon tnum">${streak}</div>
+        <div class="text-[11px] text-muted">días activos seguidos</div>
+      </div>
+      <div class="rounded-2xl border border-line bg-panel p-4">
+        <div class="text-[11px] uppercase tracking-wider text-muted">Marcas (PR)</div>
+        <div class="font-display text-4xl font-extrabold text-sport tnum">${prKeys.length}</div>
+        <div class="text-[11px] text-muted">ejercicios con registro</div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-line bg-panel p-4">
+      <div class="text-[11px] uppercase tracking-[0.18em] text-muted mb-3">Pasos · últimos 7 días</div>
+      <div class="flex items-end gap-1.5">${stepsHtml}</div>
+    </div>
+
+    <div class="rounded-2xl border border-line bg-panel p-4">
+      <div class="text-[11px] uppercase tracking-[0.18em] text-muted mb-1">Pesos máximos por ejercicio</div>
+      ${prHtml}
+    </div>
+  </div>`;
 }
 
-// ── NAV HELPERS ───────────────────────────────────────
-function irProducto() {
-  document.getElementById('producto').scrollIntoView({ behavior: 'smooth' });
-}
-function irCheckout() {
-  document.getElementById('checkout-section').scrollIntoView({ behavior: 'smooth' });
+/* =========================================================
+   BIND DE EVENTOS DE LA VISTA
+   ========================================================= */
+function bindView(){
+  // Pasos
+  document.querySelectorAll('.stepBtn').forEach(b=> b.onclick=()=>{
+    const log=getLog(todayKey()); log.steps=(log.steps||0)+parseInt(b.dataset.add); save();
+    if(log.steps>=state.stepGoal && log.steps-parseInt(b.dataset.add)<state.stepGoal) toast('🔥 ¡10.000 pasos logrados!');
+    render();
+  });
+  const se=document.querySelector('.stepEdit');
+  if(se) se.onclick=()=>{
+    const v=prompt('Pasos de hoy:', getLog(todayKey()).steps||0);
+    if(v!==null){ getLog(todayKey()).steps=Math.max(0,parseInt(v)||0); save(); render(); }
+  };
+
+  // Running
+  const rd=document.getElementById('runDone');
+  if(rd) rd.onclick=()=>{
+    const log=getLog(todayKey());
+    const min=parseInt(document.getElementById('runMin').value)||null;
+    log.running = (log.running&&log.running.done)? null : {done:true, minutes:min};
+    save(); if(log.running) toast('✓ Sesión Z2 validada'); render();
+  };
+
+  // Swap ejercicio
+  document.querySelectorAll('.swapBtn').forEach(b=> b.onclick=()=>{
+    const code=dayCode(); const e=state.routine[code].exercises.find(x=>x.id===b.dataset.ex);
+    if(e){ e.swapped=!e.swapped; save(); render(); }
+  });
+
+  // Inputs de series -> guardar en vivo
+  document.querySelectorAll('.setIn').forEach(inp=> inp.onchange=()=>{
+    const log=getLog(todayKey()); const id=inp.dataset.ex; const s=parseInt(inp.dataset.set);
+    if(!log.strength[id]) log.strength[id]={sets:[]};
+    if(!log.strength[id].sets[s]) log.strength[id].sets[s]={};
+    log.strength[id].sets[s][inp.dataset.f]= inp.value===''? null : parseFloat(inp.value);
+    save();
+  });
+
+  // Guardar serie + progresión
+  document.querySelectorAll('.logBtn').forEach(b=> b.onclick=()=> checkProgression(b.dataset.ex));
+
+  // Editar día (fuerza)
+  document.querySelectorAll('.editDay').forEach(b=> b.onclick=()=> openDayEditor(b.dataset.day));
+
+  // Vista semana -> abrir día
+  document.querySelectorAll('.weekDay').forEach(b=> b.onclick=()=>{
+    const code=b.dataset.day;
+    if(state.routine[code].type==='strength') openDayEditor(code);
+    else toast('Día de '+(state.routine[code].type==='running'?'cardio':'descanso'));
+  });
 }
 
-// ── TOAST ─────────────────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+/* =========================================================
+   ALGORITMO DE SOBRECARGA PROGRESIVA (+2.5 kg)
+   ========================================================= */
+function checkProgression(exId){
+  const code=dayCode();
+  const e=state.routine[code].exercises.find(x=>x.id===exId);
+  if(!e) return;
+  const log=getLog(todayKey());
+  const data=log.strength[exId];
+  const sets=effectiveSets(e.sets);
+
+  if(!data || !data.sets || data.sets.filter(s=>s&&s.reps).length<sets){
+    toast('Completá las '+sets+' series primero'); return;
+  }
+
+  const weights=data.sets.slice(0,sets).map(s=>parseFloat(s.weight)||0);
+  const reps=data.sets.slice(0,sets).map(s=>parseInt(s.reps)||0);
+  const baseW=Math.max(...weights);
+
+  // ¿Todas las series alcanzaron el tope de repeticiones?
+  const allMax = reps.every(r=> r>=e.repMax);
+
+  if(allMax){
+    // Doble progresión: subir peso y volver al piso del rango
+    const newW = baseW + 2.5;
+    state.targets[exId] = { weight:newW, reps:e.repMin };
+    save();
+    successSheet(e, baseW, newW);
+  } else {
+    // Mantener peso, objetivo: sumar reps hacia el tope
+    const minReps=Math.min(...reps);
+    state.targets[exId] = { weight:baseW, reps: Math.min(e.repMax, minReps+1) };
+    save();
+    toast(`💪 Registrado · próxima meta: ${baseW} ${state.units} × ${state.targets[exId].reps}`);
+    render();
+  }
 }
+
+function successSheet(e, oldW, newW){
+  openSheet(`
+    <div class="p-6 text-center">
+      <div class="w-16 h-16 mx-auto rounded-full bg-neon/15 border border-neon/40 glow flex items-center justify-center text-3xl pop">🚀</div>
+      <div class="font-display text-2xl font-extrabold mt-3">¡Progresión desbloqueada!</div>
+      <div class="text-sm text-muted mt-1">Completaste todas las series en el tope del rango.</div>
+      <div class="mt-5 flex items-center justify-center gap-4">
+        <div class="text-center"><div class="text-[10px] text-muted uppercase">Anterior</div><div class="font-mono text-xl tnum">${oldW} ${state.units}</div></div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <div class="text-center"><div class="text-[10px] text-neon uppercase">Próxima sesión</div><div class="font-mono text-xl tnum text-neon font-bold">${newW} ${state.units}</div></div>
+      </div>
+      <div class="text-[12px] text-muted mt-4">Volvé a empezar el rango en ${e.repMin} reps con el nuevo peso.</div>
+      <button class="closeSheet tap w-full mt-5 py-3 rounded-xl bg-neon text-ink font-bold">Entendido</button>
+    </div>
+  `);
+  render();
+}
+
+/* =========================================================
+   EDITOR DE DÍA / EJERCICIOS
+   ========================================================= */
+function openDayEditor(code){
+  const day=state.routine[code];
+  let rows = day.exercises.map((e,i)=>`
+    <div class="rounded-xl border border-line bg-panel2 p-3 space-y-2" data-ed="${e.id}">
+      <div class="flex items-center gap-2">
+        <input class="edName flex-1 min-w-0 bg-panel border border-line rounded-lg px-2.5 py-2 text-sm font-semibold focus:border-neon outline-none" value="${escapeAttr(e.name)}" placeholder="Ejercicio principal">
+        <button class="edDel tap w-9 h-9 flex-none rounded-lg bg-panel border border-line text-red-400">✕</button>
+      </div>
+      <input class="edAlt w-full bg-panel border border-line rounded-lg px-2.5 py-2 text-xs text-muted focus:border-sport outline-none" value="${escapeAttr(e.alt)}" placeholder="Alternativa">
+      <div class="grid grid-cols-4 gap-2">
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Series</div><input type="number" inputmode="numeric" class="edSets w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="${e.sets}"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Rep min</div><input type="number" inputmode="numeric" class="edMin w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="${e.repMin}"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Rep max</div><input type="number" inputmode="numeric" class="edMax w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="${e.repMax}"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Descanso</div><input class="edRest w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono text-center text-xs focus:border-neon outline-none" value="${escapeAttr(e.rest)}"></div>
+      </div>
+    </div>`).join('');
+
+  openSheet(`
+    <div class="px-5 pt-5 pb-4">
+      <div class="w-10 h-1 bg-line rounded-full mx-auto mb-4"></div>
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.2em] text-neon font-semibold">Editar · ${DAY_NAMES[code]}</div>
+          <div class="font-display text-2xl font-extrabold">${day.title}</div>
+        </div>
+      </div>
+      <div class="text-[12px] text-muted mb-4">Cambiá ejercicios, series y rangos. Subí la complejidad cuando quieras (ej. semana 3+).</div>
+      <div id="edRows" class="space-y-3">${rows}</div>
+      <button id="edAdd" class="tap w-full mt-3 py-3 rounded-xl border border-dashed border-line text-muted font-semibold text-sm">+ Añadir ejercicio</button>
+      <div class="grid grid-cols-2 gap-3 mt-5">
+        <button id="edReset" class="tap py-3 rounded-xl bg-panel2 border border-line font-semibold text-sm text-muted">Restaurar día</button>
+        <button id="edSave" class="tap py-3 rounded-xl bg-neon text-ink font-bold">Guardar cambios</button>
+      </div>
+    </div>
+  `);
+
+  const rowsEl=document.getElementById('edRows');
+  rowsEl.querySelectorAll('.edDel').forEach(b=> b.onclick=()=> b.closest('[data-ed]').remove());
+  document.getElementById('edAdd').onclick=()=>{
+    const wrap=document.createElement('div');
+    wrap.innerHTML=`<div class="rounded-xl border border-line bg-panel2 p-3 space-y-2" data-ed="new${Date.now()}">
+      <div class="flex items-center gap-2">
+        <input class="edName flex-1 min-w-0 bg-panel border border-line rounded-lg px-2.5 py-2 text-sm font-semibold focus:border-neon outline-none" placeholder="Ejercicio principal">
+        <button class="edDel tap w-9 h-9 flex-none rounded-lg bg-panel border border-line text-red-400">✕</button>
+      </div>
+      <input class="edAlt w-full bg-panel border border-line rounded-lg px-2.5 py-2 text-xs text-muted focus:border-sport outline-none" placeholder="Alternativa">
+      <div class="grid grid-cols-4 gap-2">
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Series</div><input type="number" class="edSets w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="3"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Rep min</div><input type="number" class="edMin w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="8"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Rep max</div><input type="number" class="edMax w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono tnum text-center text-sm focus:border-neon outline-none" value="10"></div>
+        <div><div class="text-[9px] text-muted uppercase text-center mb-1">Descanso</div><input class="edRest w-full bg-panel border border-line rounded-lg px-1 py-1.5 font-mono text-center text-xs focus:border-neon outline-none" value="90s"></div>
+      </div>
+    </div>`;
+    const node=wrap.firstElementChild;
+    node.querySelector('.edDel').onclick=()=> node.remove();
+    rowsEl.appendChild(node);
+  };
+  document.getElementById('edReset').onclick=()=>{
+    if(confirm('¿Restaurar este día a la rutina original? Se pierden los ejercicios personalizados de este día.')){
+      state.routine[code]=defaultRoutine()[code]; save(); closeSheet(); render(); toast('Día restaurado');
+    }
+  };
+  document.getElementById('edSave').onclick=()=>{
+    const out=[];
+    rowsEl.querySelectorAll('[data-ed]').forEach(r=>{
+      const name=r.querySelector('.edName').value.trim();
+      if(!name) return;
+      const oldId = r.dataset.ed.startsWith('new')? null : r.dataset.ed;
+      const old = oldId? day.exercises.find(x=>x.id===oldId) : null;
+      out.push({
+        id: oldId || ('e'+Math.random().toString(36).slice(2,9)),
+        name,
+        alt: r.querySelector('.edAlt').value.trim() || name,
+        sets: Math.max(1, parseInt(r.querySelector('.edSets').value)||3),
+        repMin: Math.max(1, parseInt(r.querySelector('.edMin').value)||8),
+        repMax: Math.max(1, parseInt(r.querySelector('.edMax').value)||10),
+        rest: r.querySelector('.edRest').value.trim() || '90s',
+        swapped: old? old.swapped : false,
+      });
+    });
+    day.exercises=out; save(); closeSheet(); render(); toast('✓ Rutina actualizada');
+  };
+}
+
+/* =========================================================
+   AJUSTES (deload, unidades, meta, backup, reset)
+   ========================================================= */
+document.getElementById('settingsBtn').onclick=()=>{
+  openSheet(`
+  <div class="px-5 pt-5 pb-5">
+    <div class="w-10 h-1 bg-line rounded-full mx-auto mb-4"></div>
+    <div class="font-display text-2xl font-extrabold mb-4">Ajustes</div>
+
+    <div class="rounded-2xl border border-line bg-panel2 p-4 mb-3">
+      <div class="flex items-center justify-between">
+        <div class="pr-3">
+          <div class="font-semibold">Periodización automática</div>
+          <div class="text-[12px] text-muted">La app cuenta tus semanas entrenadas y activa la descarga sola.</div>
+        </div>
+        <div id="autoToggle" class="toggle ${state.autoPeriodization?'on':''}"></div>
+      </div>
+
+      <div id="autoOpts" class="${state.autoPeriodization?'':'hidden'} mt-4 pt-4 border-t border-line">
+        <div class="text-[12px] text-muted mb-2">Semanas de carga antes de cada descarga</div>
+        <div class="flex gap-2">
+          ${[3,4,5,6].map(n=>`<button class="cycleBtn tap flex-1 py-2 rounded-lg border border-line text-sm font-bold tnum ${state.cycleLength===n?'seg-active text-neon':'text-muted'}" data-n="${n}">${n}</button>`).join('')}
+        </div>
+        <div class="text-[11px] text-muted mt-2 leading-snug">Ej. en "3": semanas 1-2-3 en carga progresiva y la 4ª en descarga, repitiendo el ciclo.</div>
+        <div class="mt-3 text-[12px] text-muted mb-2">Días mínimos para contar una semana</div>
+        <div class="flex gap-2">
+          ${[2,3,4].map(n=>`<button class="thrBtn tap flex-1 py-2 rounded-lg border border-line text-sm font-bold tnum ${state.weekThreshold===n?'seg-active text-neon':'text-muted'}" data-n="${n}">${n} días</button>`).join('')}
+        </div>
+      </div>
+
+      <div id="manualOpts" class="${state.autoPeriodization?'hidden':''} mt-4 pt-4 border-t border-line flex items-center justify-between">
+        <div class="pr-3"><div class="font-semibold text-sm">Forzar descarga ahora</div><div class="text-[12px] text-muted">Modo manual</div></div>
+        <div id="deloadToggle" class="toggle ${state.deload?'on':''}"></div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-line bg-panel2 p-4 mb-3">
+      <div class="font-semibold mb-2">Unidad de peso</div>
+      <div class="flex gap-2">
+        <button class="unitBtn tap flex-1 py-2 rounded-lg border border-line text-sm font-bold ${state.units==='kg'?'seg-active text-neon':'text-muted'}" data-u="kg">KG</button>
+        <button class="unitBtn tap flex-1 py-2 rounded-lg border border-line text-sm font-bold ${state.units==='lbs'?'seg-active text-neon':'text-muted'}" data-u="lbs">LBS</button>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-line bg-panel2 p-4 mb-3 flex items-center justify-between">
+      <div class="pr-3"><div class="font-semibold">Meta de pasos</div><div class="text-[12px] text-muted">Objetivo diario</div></div>
+      <input id="goalIn" type="number" inputmode="numeric" value="${state.stepGoal}" class="w-24 bg-panel border border-line rounded-lg px-2 py-2 font-mono tnum text-center focus:border-neon outline-none">
+    </div>
+
+    <div class="rounded-2xl border border-line bg-panel2 p-4 mb-3">
+      <div class="font-semibold mb-1">Respaldo de datos</div>
+      <div class="text-[12px] text-muted mb-3">Exportá tu progreso a un archivo. Importante si cambiás de teléfono o limpiás el navegador.</div>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="exportBtn" class="tap py-2.5 rounded-lg bg-neon text-ink font-bold text-sm">Exportar</button>
+        <button id="importBtn" class="tap py-2.5 rounded-lg bg-panel border border-line font-semibold text-sm">Importar</button>
+      </div>
+      <input id="importFile" type="file" accept="application/json" class="hidden">
+    </div>
+
+    <button id="resetAll" class="tap w-full py-3 rounded-xl border border-red-500/30 text-red-400 font-semibold text-sm">Borrar todos los datos</button>
+    <div class="text-center text-[11px] text-muted mt-4">Mutación 2026 · datos guardados en este dispositivo</div>
+  </div>
+  `);
+
+  const reopen = ()=> document.getElementById('settingsBtn').onclick();
+  document.getElementById('autoToggle').onclick=function(){
+    state.autoPeriodization=!state.autoPeriodization; save(); render(); reopen();
+    toast(state.autoPeriodization?'⚙️ Periodización automática':'Modo manual');
+  };
+  document.querySelectorAll('.cycleBtn').forEach(b=> b.onclick=()=>{ state.cycleLength=parseInt(b.dataset.n); save(); render(); reopen(); });
+  document.querySelectorAll('.thrBtn').forEach(b=> b.onclick=()=>{ state.weekThreshold=parseInt(b.dataset.n); save(); render(); reopen(); });
+  const dt=document.getElementById('deloadToggle');
+  if(dt) dt.onclick=function(){
+    state.deload=!state.deload; this.classList.toggle('on',state.deload); save(); render();
+    toast(state.deload?'🔵 Descarga activada':'Descarga desactivada');
+  };
+  document.querySelectorAll('.unitBtn').forEach(b=> b.onclick=()=>{ state.units=b.dataset.u; save(); reopen(); });
+  document.getElementById('goalIn').onchange=function(){ state.stepGoal=Math.max(1000,parseInt(this.value)||10000); save(); };
+  document.getElementById('exportBtn').onclick=exportData;
+  document.getElementById('importBtn').onclick=()=> document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange=importData;
+  document.getElementById('resetAll').onclick=()=>{
+    if(confirm('¿Borrar TODO? Esto elimina rutina personalizada e historial. Exportá primero si querés un respaldo.')){
+      localStorage.removeItem(STORAGE_KEY); state=load(); closeSheet(); render(); toast('Datos borrados');
+    }
+  };
+};
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`mutacion2026_${todayKey()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  toast('✓ Respaldo exportado');
+}
+function importData(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(!data.routine) throw new Error();
+      state=data; save(); closeSheet(); render(); toast('✓ Datos importados');
+    }catch(e){ toast('⚠️ Archivo no válido'); }
+  };
+  r.readAsText(f);
+}
+
+/* =========================================================
+   SHEET / TOAST HELPERS
+   ========================================================= */
+function openSheet(html){
+  const s=document.getElementById('sheet');
+  document.getElementById('sheetBody').innerHTML=html;
+  s.classList.remove('hidden');
+  document.getElementById('sheetBody').querySelectorAll('.closeSheet').forEach(b=> b.onclick=closeSheet);
+}
+function closeSheet(){ document.getElementById('sheet').classList.add('hidden'); }
+document.getElementById('sheetBackdrop').onclick=closeSheet;
+
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.remove('hidden'); t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');
+  clearTimeout(toastT); toastT=setTimeout(()=> t.classList.add('hidden'), 2200);
+}
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+/* =========================================================
+   INIT
+   ========================================================= */
+render();
 </script>
 </body>
 </html>
